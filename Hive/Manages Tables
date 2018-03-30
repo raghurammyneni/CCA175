@@ -1,0 +1,47 @@
+set hive.metastore.warehouse.dir;
+hive.metastore.warehouse.dir=/user/hive/warehouse
+
+
+CREATE TABLE IF NOT EXISTS orders_demo (
+    order_id INT,
+    order_date DATE,
+    order_customer_id INT,
+    order_status VARCHAR(30)) 
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+STORED AS TEXTFILE;
+
+
+DESCRIBE FORMATTED orders_demo;
+
+OK
+# col_name            	data_type           	comment             
+	 	 
+order_id            	int                 	                    
+order_date          	date                	                    
+order_customer_id   	int                 	                    
+order_status        	varchar(30)         	                    
+	 	 
+# Detailed Table Information	 	 
+Database:           	problem6            	 
+Owner:              	cloudera            	 
+CreateTime:         	Wed Mar 14 18:06:03 PDT 2018	 
+LastAccessTime:     	UNKNOWN             	 
+Protect Mode:       	None                	 
+Retention:          	0                   	 
+Location:           	hdfs://quickstart.cloudera:8020/user/hive/warehouse/problem6.db/orders_demo	 
+Table Type:         	MANAGED_TABLE       	 
+Table Parameters:	 	 
+	transient_lastDdlTime	1521075963          
+	 	 
+# Storage Information	 	 
+SerDe Library:      	org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe	 
+InputFormat:        	org.apache.hadoop.mapred.TextInputFormat	 
+OutputFormat:       	org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat	 
+Compressed:         	No                  	 
+Num Buckets:        	-1                  	 
+Bucket Columns:     	[]                  	 
+Sort Columns:       	[]                  	 
+Storage Desc Params:	 	 
+	field.delim         	,                   
+	serialization.format	,                   
+Time taken: 0.075 seconds, Fetched: 30 row(s)

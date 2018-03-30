@@ -1,0 +1,29 @@
+USE retail_ods;
+
+DROP TABLE orders_bucket;
+
+SET hive.enforce.bucketing=true;
+
+CREATE TABLE IF NOT EXISTS orders_bucket (
+    order_id INT,
+    order_date STRING,
+    order_customer_id INT,
+    order_status STRING) 
+CLUSTERED BY (order_id) INTO 16 BUCKETS
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '|'
+STORED AS TEXTFILE;
+
+
+SELECT order_id, 
+    from_unixtime(CAST(SUBSTR(order_date, 1, 10) AS INT)) as order_date,
+    order_customer_id,
+    order_status
+FROM retail_stage_avro.orders LIMIT 10;
+
+
+INSERT INTO TABLE orders_bucket
+SELECT order_id, 
+    from_unixtime(CAST(SUBSTR(order_date, 1, 10) AS INT)) as order_date,
+    order_customer_id,
+    order_status
+FROM retail_stage_avro.orders;

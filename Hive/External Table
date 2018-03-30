@@ -1,0 +1,59 @@
+show databases;
+use cards;
+
+CREATE EXTERNAL TABLE IF NOT EXISTS deck_of_cards_external (
+    color STRING,
+    suit STRING,
+    pip STRING)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '|'
+STORED AS TEXTFILE
+LOCATION '/user/cloudera/HIVE/cards';
+
+SELECT * FROM deck_of_cards_external;
+
+DESCRIBE FORMATTED deck_of_cards_external;
+OK
+# col_name            	data_type           	comment             
+	 	 
+color               	string              	                    
+suit                	string              	                    
+pip                 	string              	                    
+	 	 
+# Detailed Table Information	 	 
+Database:           	cards               	 
+Owner:              	cloudera            	 
+CreateTime:         	Wed Mar 14 18:29:50 PDT 2018	 
+LastAccessTime:     	UNKNOWN             	 
+Protect Mode:       	None                	 
+Retention:          	0                   	 
+Location:           	hdfs://quickstart.cloudera:8020/user/cloudera/HIVE/cards	 
+Table Type:         	EXTERNAL_TABLE      	 
+Table Parameters:	 	 
+	COLUMN_STATS_ACCURATE	false               
+	EXTERNAL            	TRUE                
+	numFiles            	0                   
+	numRows             	-1                  
+	rawDataSize         	-1                  
+	totalSize           	0                   
+	transient_lastDdlTime	1521077390          
+	 	 
+# Storage Information	 	 
+SerDe Library:      	org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe	 
+InputFormat:        	org.apache.hadoop.mapred.TextInputFormat	 
+OutputFormat:       	org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat	 
+Compressed:         	No                  	 
+Num Buckets:        	-1                  	 
+Bucket Columns:     	[]                  	 
+Sort Columns:       	[]                  	 
+Storage Desc Params:	 	 
+	field.delim         	|                   
+	serialization.format	|                   
+Time taken: 0.229 seconds, Fetched: 35 row(s)
+
+
+/**************************************************************************************
+Droping a managed table will delete the structure from metastore and also the folder under ../../warehouse/..db/
+and all the data under that table will be lost
+
+Droping an external table would not delete the data but the table structure from metastore is droped from the database.
+***************************************************************************************/

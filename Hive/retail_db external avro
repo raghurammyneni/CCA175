@@ -1,0 +1,57 @@
+sqoop import-all-tables \
+--connect jdbc:mysql://quickstart.cloudera:8020/retail_db
+--username retail_dba
+--password cloudera
+--as-avrodatafile
+--warehouse-dir /user/hive/warehouse/retail_stage_avro.db
+
+avro-tools getschema hdfs://localhost/user/hive/warehouse/retail_stage_avro.db/categories/part-m-00000.avro
+avro-tools getschema hdfs://quickstart.cloudera:8020/user/hive/warehouse/retail_stage_avro.db/categories/part-m-00000.avro
+
+hdfs dfs -ls /user/hive/schemas
+hdfs dfs -mkdir /user/hive/schemas/retail_stage_avro
+ls *.avsc
+hdfs dfs -put *.avsc /user/hive/schemas/retail_stage_avro
+hdfs dfs -ls /user/hive/schemas/retail_stage_avro
+
+hive
+SHOW DATABASES;
+CREATE DATABASE IF NOT EXISTS retail_stage_avro;
+USE retail_stage_avro;
+SHOW TABLES;
+
+-- categories 
+CREATE EXTERNAL TABLE IF NOT EXISTS categories
+STORED AS AVRO
+LOCATION '/user/hive/warehouse/retail_stage_avro.db/categories'
+TBLPROPERTIES ('avro.schema.url' = '/user/hive/schemas/retail_stage_avro/categories.avsc');
+
+-- customers
+CREATE EXTERNAL TABLE IF NOT EXISTS customers
+STORED AS AVRO
+LOCATION '/user/hive/warehouse/retail_stage_avro.db/customers'
+TBLPROPERTIES ('avro.schema.url' = '/user/hive/schemas/retail_stage_avro/customers.avsc');
+
+-- departments
+CREATE EXTERNAL TABLE IF NOT EXISTS departments
+STORED AS AVRO
+LOCATION '/user/hive/warehouse/retail_stage_avro.db/departments'
+TBLPROPERTIES ('avro.schema.url' = '/user/hive/schemas/retail_stage_avro/departments.avsc');
+
+-- order_items
+CREATE EXTERNAL TABLE IF NOT EXISTS order_items
+STORED AS AVRO
+LOCATION '/user/hive/warehouse/retail_stage_avro.db/order_items'
+TBLPROPERTIES ('avro.schema.url' = '/user/hive/schemas/retail_stage_avro/order_items.avsc');
+
+-- orders
+CREATE EXTERNAL TABLE IF NOT EXISTS orders
+STORED AS AVRO
+LOCATION '/user/hive/warehouse/retail_stage_avro.db/orders'
+TBLPROPERTIES ('avro.schema.url' = '/user/hive/schemas/retail_stage_avro/orders.avsc');
+
+-- products
+CREATE EXTERNAL TABLE IF NOT EXISTS products
+STORED AS AVRO
+LOCATION '/user/hive/warehouse/retail_stage_avro.db/products'
+TBLPROPERTIES ('avro.schema.url' = '/user/hive/schemas/retail_stage_avro/products.avsc');

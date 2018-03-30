@@ -1,0 +1,50 @@
+hive
+show databases;
+use problem6;
+show tables;
+
+describe departments;
+select * from departments;
+
+describe orders;
+select count(1) from orders; //68883
+select * from orders limit 5;
+
+-- Get number of orders by order status for a given date
+select order_status, count(1) as total_orders  
+from orders where order_date = '2013-12-14 00:00:00.0' 
+group by order_status
+order by total_orders;
+/***************************
+SUSPECTED_FRAUD	1
+PAYMENT_REVIEW	1
+CANCELED	1
+ON_HOLD	3
+PROCESSING	11
+PENDING	12
+CLOSED	14
+PENDING_PAYMENT	28
+COMPLETE	29
+*****************************/
+
+
+-- Get number of completed orders for each date befors 2013-12-14 00:00:00.0
+select order_date, count(1)
+from orders
+where order_date <= '2013-12-14 00:00:00.0'
+and order_status = 'COMPLETE'
+group by order_date
+order by order_date;
+
+
+-- Get number of pending orders for each date for the month of Dec, 2013
+SELECT order_date, count(1)
+FROM orders
+WHERE order_date LIKE '2013-12%' 
+AND order_status IN ('PENDING', 'PENDING_PAYMENT', 'PAYMENT_REVIEW', 'ON_HOLD')
+GROUP BY order_date
+ORDER BY order_date;
+
+
+
+

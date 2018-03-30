@@ -1,0 +1,49 @@
+hdfs dfs -mkdir /user/cloudera/HIVE
+hdfs dfs -put deck-of-cards.txt /user/cloudera/HIVE
+
+hive
+
+dfs -ls /user/hive/warehouse;
+
+CREATE DATABASE IF NOT EXISTS cards;
+
+dfs -ls /user/hive/warehouse; // will have new file cards.db in warehouse directory
+set hive.cli.print.current.db=true; //show current db
+
+use cards;
+show tables;
+
+CREATE TABLE IF NOT EXISTS deck_of_cards (
+    COLOR string,
+    SUIT string,
+    PIP string
+) ROW FORMAT DELIMITED FIELDS TERMINATED BY '|'
+STORED AS TEXTFILE;
+
+show tables;
+dfs -ls /user/hive/warehouse/cards.db;
+
+LOAD DATA LOCAL INPATH "Desktop/deck-of-cards.txt" INTO TABLE deck_of_cards; //will load the file to /user/hive/warehouse/cards.db/deck_of_cards
+
+dfs -ls /user/hive/warehouse/cards.db/deck_of_cards; 
+
+
+ls /etc/hive/conf
+view /etc/hive/conf/hive-site.xml 
+
+
+mysql -u hive -p
+show databases;
+
+use metastore;
+show tables;
+SELECT * FROM TBLS;
+exit;
+
+
+hive
+set mapreduce.job.reduces;
+set mapreduce.job.reduces = 5;
+set mapreduce.job.reduces;
+
+

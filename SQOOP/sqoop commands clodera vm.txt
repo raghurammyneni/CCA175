@@ -1,0 +1,107 @@
+ sqoop list-tables \
+ --connect jdbc:mysql://localhost/retail_db \
+ --username retail_dba \
+ --password cloudera
+ 
+ 
+ sqoop eval \
+ --query "select count(1) from customers" \
+ --connect jdbc:mysql://localhost/retail_db \
+ --username retail_dba \
+ --password cloudera
+ 
+ 
+ sqoop eval \
+ --query "SELECT * FROM customers LIMIT 5" \
+ --connect jdbc:mysql://localhost/retail_db \
+ --username retail_dba \
+ --password cloudera
+ 
+ 
+ sqoop import-all-tables \
+ --connect jdbc:mysql://localhost/retail_db \
+ --username retail_dba \
+ --password cloudera \
+ --warehouse-dir /loudacre
+ 
+ 
+ sqoop import \
+ --table departments \
+ --connect jdbc:mysql://localhost/retail_db \
+ --username retail_dba \
+ --password cloudera 
+
+
+sqoop import \
+--table departments \
+--connect jdbc:mysql://localhost/retail_db \
+--username retail_dba \
+--password cloudera \
+--target-dir /depts 
+
+
+sqoop import \
+--table categories \
+--connect jdbc:mysql://localhost/retail_db \
+--username retail_dba \
+--password cloudera \
+--target-dir /sqoop_imports/categories \
+--fields-terminated-by "|"
+
+
+sqoop import \
+--connect jdbc:mysql://localhost/retail_db \
+--username retail_dba \
+--password cloudera \
+--table products \
+--columns "product_id, product_name, product_price" \
+--where "product_name like '%Under Armour Men%'" \
+--target-dir /sqoop_imports/UA_Mens
+
+
+sqoop import \
+--connect jdbc:mysql://localhost/retail_db \
+--username retail_dba \
+--password cloudera \
+--table products \
+--columns "product_id, product_name, product_price" \
+--where "product_name like '%Nike Men%'" \
+--as-parquetfile \
+--target-dir /sqoop_imports/Nike_Mens
+
+
+sqoop import \
+--connect jdbc:mysql://localhost/retail_db \
+--username retail_dba \
+--password cloudera \
+--table orders \
+--as-avrodatafile \
+--target-dir /user/cloudera/problem1/orders \
+--compress \
+--compression-codec org.apache.hadoop.io.compress.SnappyCodec
+
+
+
+sqoop import \
+--connect jdbc:mysql://localhost/retail_db \
+--username retail_dba \
+--password cloudera \
+--table order_items \
+--as-avrodatafile \
+--target-dir /user/cloudera/problem1/order_items \
+--compress \
+--compression-codec org.apache.hadoop.io.compress.SnappyCodec
+
+
+sqoop export \
+--connect jdbc:mysql://localhost/retail_db \
+--username retail_dba \
+--password cloudera \
+--export-dir /sqoop_imports/UA_Mens \
+--table ua_mens \
+--update-mode allowinsert
+
+
+
+
+

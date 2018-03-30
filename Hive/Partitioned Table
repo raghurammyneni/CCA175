@@ -1,0 +1,52 @@
+CREATE DATABASE IF NOT EXISTS retail_ods;
+
+CREATE TABLE IF NOT EXISTS retail_ods.orders (
+    order_id INT,
+    order_date STRING,
+    order_customer_id INT,
+    order_status STRING)
+PARTITIONED BY (order_month STRING)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '|'
+STORED AS TEXTFILE;
+
+SELECT from_unixtime(CAST(SUBSTR(order_date,1,10) AS BIGINT)) FROM retail_stage_avro.orders LIMIT 10;
+
+SELECT DISTINCT SUBSTR(from_unixtime(CAST(SUBSTR(order_date,1,10) AS BIGINT)),1,7) AS ALL_MONTHS FROM retail_stage_avro.orders;
+
+SELECT order_id,
+    from_unixtime(CAST(SUBSTR(order_date,1,10) AS BIGINT)) as order_date,
+    order_customer_id,
+    order_status,
+    SUBSTR(from_unixtime(CAST(SUBSTR(order_date,1,10) AS BIGINT)),1,7) as order_month
+FROM retail_stage_avro.orders LIMIT 10;
+
+SET hive.exec.dynamic.partition=true;
+SET hive.exec.dynamic.partition.mode=nonstrict;
+
+INSERT INTO TABLE retail_ods.orders 
+PARTITION (order_month)
+SELECT order_id,
+    from_unixtime(CAST(SUBSTR(order_date,1,10) AS BIGINT)) as order_date,
+    order_customer_id,
+    order_status,
+    SUBSTR(from_unixtime(CAST(SUBSTR(order_date,1,10) AS BIGINT)),1,7) as order_month
+FROM retail_stage_avro.orders;
+
+
+dfs -ls hdfs://quickstart.cloudera:8020/user/hive/warehouse/retail_ods.db/orders;
+dfs -tail hdfs://quickstart.cloudera:8020/user/hive/warehouse/retail_ods.db/orders/order_month=2014-06/000000_0;
+
+
+-- Static Partitioning
+ALTER TABLE retail_ods.orders ADD PARTITION (order_month='2018-02');
+
+INSERT INTO TABLE retail_ods.orders PARTITION (order_month='2018-02')
+SELECT order_id,
+    from_unixtime(CAST(SUBSTR(order_date,1,10) AS BIGINT)) as order_date,
+    order_customer_id,
+    order_status
+FROM retail_stage_avro.orders
+WHERE SUBSTR(from_unixtime(CAST(SUBSTR(order_date,1,10) AS BIGINT)),1,7) = '2014-03';
+
+
+
